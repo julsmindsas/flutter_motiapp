@@ -6,8 +6,10 @@
 - **Android:** `ca-app-pub-1688703174684930~1974575921`
 - **iOS:** `ca-app-pub-1688703174684930~1974575921`
 
-### ID de Unidad de Anuncios
-- **Unidad actual:** `ca-app-pub-1688703174684930/7586011167`
+### IDs de Unidades de Anuncios
+- **Interstitial (Real):** `ca-app-pub-1688703174684930/7586011167`
+- **Banner (Temporal):** `ca-app-pub-3940256099942544/6300978111` (ID de prueba)
+- **Rewarded (Temporal):** `ca-app-pub-3940256099942544/5224354917` (ID de prueba)
 
 ## 🔧 Configuración Implementada
 
@@ -35,46 +37,52 @@
 ### Banner Ads
 - Ubicación: Páginas principales
 - Frecuencia: Siempre visible
-- ID: `ca-app-pub-1688703174684930/7586011167`
+- ID: `ca-app-pub-3940256099942544/6300978111` (Temporal: ID de prueba)
+- **Estado:** ⚠️ Necesita crear unidad real en AdMob
 
 ### Interstitial Ads
 - Ubicación: Entre navegaciones
 - Frecuencia: Cada 3 frases vistas
 - ID: `ca-app-pub-1688703174684930/7586011167`
+- **Estado:** ✅ Configurado con ID real
 
 ### Rewarded Ads
 - Ubicación: Opcional para usuarios
 - Frecuencia: A petición del usuario
-- ID: `ca-app-pub-1688703174684930/7586011167`
+- ID: `ca-app-pub-3940256099942544/5224354917` (Temporal: ID de prueba)
+- **Estado:** ⚠️ Necesita crear unidad real en AdMob
 
 ## 🚀 Próximos Pasos Recomendados
 
 ### 1. Crear Unidades de Anuncios Específicas
 En AdMob, crear unidades separadas para cada tipo de anuncio:
 
-1. **Banner Ad Unit**
+1. **Banner Ad Unit** ⚠️ **PENDIENTE**
    - Tipo: Banner
    - Nombre: "MotiApp Banner"
    - ID: Crear nuevo
+   - **Estado:** Usando ID de prueba temporalmente
 
-2. **Interstitial Ad Unit**
+2. **Interstitial Ad Unit** ✅ **CONFIGURADO**
    - Tipo: Interstitial
    - Nombre: "MotiApp Interstitial"
-   - ID: Crear nuevo
+   - ID: `ca-app-pub-1688703174684930/7586011167`
+   - **Estado:** Funcionando con ID real
 
-3. **Rewarded Ad Unit**
+3. **Rewarded Ad Unit** ⚠️ **PENDIENTE**
    - Tipo: Rewarded
    - Nombre: "MotiApp Rewarded"
    - ID: Crear nuevo
+   - **Estado:** Usando ID de prueba temporalmente
 
 ### 2. Actualizar Configuración
-Una vez creadas las unidades específicas, actualizar `lib/core/config/ad_config.dart`:
+Una vez creadas las unidades específicas para Banner y Rewarded, actualizar `lib/core/config/ad_config.dart`:
 
 ```dart
 // IDs de unidades de anuncios de producción
-static const String productionBannerAdUnitId = 'tu-banner-id-aqui';
-static const String productionInterstitialAdUnitId = 'tu-interstitial-id-aqui';
-static const String productionRewardedAdUnitId = 'tu-rewarded-id-aqui';
+static const String productionBannerAdUnitId = 'tu-banner-id-aqui'; // Reemplazar con ID real
+static const String productionInterstitialAdUnitId = 'ca-app-pub-1688703174684930/7586011167'; // ✅ Ya configurado
+static const String productionRewardedAdUnitId = 'tu-rewarded-id-aqui'; // Reemplazar con ID real
 ```
 
 ### 3. Configurar Entornos
@@ -115,11 +123,12 @@ static bool get isDevelopment {
 
 - [x] ID de aplicación configurado en Android
 - [x] ID de aplicación configurado en iOS
-- [x] IDs de unidades de anuncios configurados
 - [x] Configuración centralizada implementada
 - [x] Manejo de entornos implementado
-- [ ] Crear unidades específicas en AdMob
-- [ ] Actualizar IDs específicos
+- [x] **Interstitial Ad configurado con ID real**
+- [ ] Crear unidad Banner específica en AdMob
+- [ ] Crear unidad Rewarded específica en AdMob
+- [ ] Actualizar IDs de Banner y Rewarded
 - [ ] Testing en producción
 - [ ] Monitoreo de métricas
 

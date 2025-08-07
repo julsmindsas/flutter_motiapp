@@ -4,9 +4,10 @@ class AdConfig {
   static const String iosAppId = 'ca-app-pub-1688703174684930~1974575921';
   
   // IDs de unidades de anuncios de producción
-  static const String productionBannerAdUnitId = 'ca-app-pub-1688703174684930/7586011167';
-  static const String productionInterstitialAdUnitId = 'ca-app-pub-1688703174684930/7586011167';
-  static const String productionRewardedAdUnitId = 'ca-app-pub-1688703174684930/7586011167';
+  // TODO: Crear unidades específicas para Banner y Rewarded en AdMob
+  static const String productionBannerAdUnitId = 'ca-app-pub-3940256099942544/6300978111'; // Temporal: ID de prueba
+  static const String productionInterstitialAdUnitId = 'ca-app-pub-1688703174684930/7586011167'; // Real
+  static const String productionRewardedAdUnitId = 'ca-app-pub-3940256099942544/5224354917'; // Temporal: ID de prueba
   
   // IDs de prueba para desarrollo
   static const String testBannerAdUnitId = 'ca-app-pub-3940256099942544/6300978111';
