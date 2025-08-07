@@ -1,0 +1,241 @@
+# Reglas de Cursor para MotiApp - Aplicación de Frases Motivadoras
+
+## Descripción del Proyecto
+MotiApp es una aplicación Flutter premium de frases motivadoras con monetización a través de publicidad. La aplicación está diseñada para iOS y Android con una paleta de colores luxury (negro, grises y blancos con acentos dorados).
+
+## Arquitectura y Estructura
+
+### Patrón de Arquitectura
+- **Clean Architecture** con separación de capas
+- **Provider** para gestión de estado
+- **Feature-based** organización de carpetas
+
+### Estructura de Carpetas
+```
+lib/
+├── core/
+│   ├── models/          # Modelos de datos
+│   ├── providers/       # Providers de estado
+│   ├── theme/          # Configuración de temas
+│   └── routes/         # Configuración de navegación
+├── features/
+│   ├── auth/           # Autenticación
+│   ├── home/           # Página principal
+│   ├── quotes/         # Gestión de frases
+│   ├── favorites/      # Favoritos
+│   ├── profile/        # Perfil de usuario
+│   └── admin/          # Panel de administrador
+└── main.dart
+```
+
+## Diseño y UI/UX
+
+### Paleta de Colores
+- **Primary Black**: #0A0A0A
+- **Secondary Black**: #1A1A1A
+- **Dark Gray**: #2A2A2A
+- **Medium Gray**: #3A3A3A
+- **Light Gray**: #4A4A4A
+- **Silver Gray**: #8A8A8A
+- **White**: #FFFFFF
+- **Gold**: #FFD700
+- **Premium Gold**: #FFB347
+
+### Principios de Diseño
+- **Premium y Luxury**: Diseño elegante y sofisticado
+- **Responsive**: Adaptable a diferentes tamaños de pantalla
+- **Accessible**: Cumplir con estándares de accesibilidad
+- **Consistent**: Mantener consistencia en toda la app
+
+### Componentes UI
+- Usar `AppTheme` para todos los colores y estilos
+- Gradientes luxury para fondos
+- Sombras y efectos premium
+- Bordes redondeados consistentes
+- Tipografía Poppins
+
+## Funcionalidades Principales
+
+### Autenticación
+- Login/Registro con Firebase Auth
+- Persistencia de sesión
+- Validación de formularios
+- Manejo de errores
+
+### Frases Motivadoras
+- Frase del día destacada
+- Lista de frases con categorías
+- Sistema de favoritos
+- Compartir frases
+- Imágenes de fondo opcionales
+
+### Monetización
+- Google Mobile Ads integrado
+- Banners publicitarios
+- Anuncios intersticiales
+- Anuncios recompensados
+- Estrategia de monetización no intrusiva
+
+### Panel de Administrador
+- Agregar nuevas frases
+- Subir imágenes
+- Gestión de categorías
+- Estadísticas básicas
+- Acceso restringido (admin@motiapp.com)
+
+## Tecnologías y Dependencias
+
+### Backend
+- **Firebase Firestore**: Base de datos
+- **Firebase Storage**: Almacenamiento de imágenes
+- **Firebase Auth**: Autenticación
+
+### Publicidad
+- **Google Mobile Ads**: Monetización
+- IDs de prueba configurados
+- Estrategia de anuncios cada 3 frases vistas
+
+### Estado y Navegación
+- **Provider**: Gestión de estado
+- **Go Router**: Navegación declarativa
+- **Shared Preferences**: Almacenamiento local
+
+### UI/UX
+- **Google Fonts**: Tipografía Poppins
+- **Cached Network Image**: Carga de imágenes
+- **Shimmer**: Efectos de carga
+- **Lottie**: Animaciones
+
+## Reglas de Código
+
+### Nomenclatura
+- **PascalCase**: Clases, widgets, providers
+- **camelCase**: Variables, métodos, funciones
+- **snake_case**: Archivos y carpetas
+- **UPPER_CASE**: Constantes
+
+### Estructura de Archivos
+- Un archivo por clase/widget
+- Separación clara de responsabilidades
+- Imports organizados por tipo
+- Comentarios descriptivos
+
+### Manejo de Errores
+- Try-catch en operaciones async
+- Mensajes de error user-friendly
+- Logging para debugging
+- Fallbacks para estados de error
+
+### Performance
+- Lazy loading de imágenes
+- Caching de datos
+- Optimización de rebuilds
+- Gestión eficiente de memoria
+
+## Configuración de Firebase
+
+### Firestore Rules
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /quotes/{quoteId} {
+      allow read: if true;
+      allow write: if request.auth != null && 
+        (request.auth.token.email == 'admin@motiapp.com' || 
+         resource.data.author == request.auth.uid);
+    }
+    match /users/{userId} {
+      allow read, write: if request.auth != null && 
+        request.auth.uid == userId;
+    }
+  }
+}
+```
+
+### Storage Rules
+```javascript
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /quotes/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null && 
+        request.auth.token.email == 'admin@motiapp.com';
+    }
+  }
+}
+```
+
+## Configuración de Publicidad
+
+### IDs de Anuncios (Desarrollo)
+- Banner: ca-app-pub-3940256099942544/6300978111
+- Interstitial: ca-app-pub-3940256099942544/1033173712
+- Rewarded: ca-app-pub-3940256099942544/5224354917
+
+### Estrategia de Monetización
+- Anuncios cada 3 frases vistas
+- Banners en páginas principales
+- Anuncios recompensados opcionales
+- Experiencia premium sin ser intrusiva
+
+## Testing y Calidad
+
+### Testing
+- Unit tests para providers
+- Widget tests para componentes
+- Integration tests para flujos principales
+
+### Calidad de Código
+- Linting con flutter_lints
+- Formato consistente
+- Documentación de APIs
+- Revisión de código
+
+## Deployment
+
+### Android
+- Configurar keystore
+- Optimizar APK/AAB
+- Configurar ProGuard
+- Testing en diferentes dispositivos
+
+### iOS
+- Configurar certificados
+- Optimizar para App Store
+- Testing en diferentes dispositivos iOS
+- Configurar capabilities
+
+## Mantenimiento
+
+### Actualizaciones
+- Mantener dependencias actualizadas
+- Revisar seguridad de Firebase
+- Actualizar reglas de publicidad
+- Monitorear métricas de uso
+
+### Monitoreo
+- Firebase Analytics
+- Crashlytics para errores
+- Métricas de publicidad
+- Feedback de usuarios
+
+## Consideraciones Especiales
+
+### Accesibilidad
+- Soporte para lectores de pantalla
+- Contraste adecuado
+- Tamaños de texto configurables
+- Navegación por teclado
+
+### Internacionalización
+- Preparado para múltiples idiomas
+- Formateo de fechas
+- Textos localizables
+
+### Seguridad
+- Validación de datos
+- Sanitización de inputs
+- Reglas de Firebase
+- Protección de datos sensibles 
