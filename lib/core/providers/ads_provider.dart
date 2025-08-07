@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import '../config/ad_config.dart';
 
 class AdsProvider extends ChangeNotifier {
   BannerAd? _bannerAd;
@@ -10,10 +11,10 @@ class AdsProvider extends ChangeNotifier {
   bool _isInterstitialAdLoaded = false;
   bool _isRewardedAdLoaded = false;
 
-  // IDs de prueba para desarrollo
-  static const String _bannerAdUnitId = 'ca-app-pub-3940256099942544/6300978111';
-  static const String _interstitialAdUnitId = 'ca-app-pub-3940256099942544/1033173712';
-  static const String _rewardedAdUnitId = 'ca-app-pub-3940256099942544/5224354917';
+  // IDs de anuncios usando la configuración centralizada
+  String get _bannerAdUnitId => AdConfig.bannerAdUnitId;
+  String get _interstitialAdUnitId => AdConfig.interstitialAdUnitId;
+  String get _rewardedAdUnitId => AdConfig.rewardedAdUnitId;
 
   BannerAd? get bannerAd => _bannerAd;
   InterstitialAd? get interstitialAd => _interstitialAd;
