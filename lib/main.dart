@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:provider/provider.dart';
+import 'core/providers/ads_provider.dart';
+import 'core/config/ad_config.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -35,35 +39,29 @@ class NotificationService {
   }
 
   static Future<void> _scheduleDailyNotification() async {
-    await _notifications.periodicallyShow(
-      0,
-      'Motivación Empresarial Diaria',
-      'Tu frase motivacional te está esperando',
-      RepeatInterval.daily,
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'daily_quotes',
-          'Daily Entrepreneur Quotes',
-          channelDescription: 'Motivational quotes for entrepreneurs',
-          importance: Importance.high,
-          priority: Priority.high,
-        ),
-        iOS: DarwinNotificationDetails(
-          presentAlert: true,
-          presentBadge: true,
-          presentSound: true,
-        ),
-      ),
-    );
+    // Por ahora, desactivamos las notificaciones para que la app funcione
+    return;
   }
 
 }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  MobileAds.instance.initialize();
+  await MobileAds.instance.initialize();
+  if (AdConfig.isDevelopment) {
+    await MobileAds.instance.updateRequestConfiguration(
+      RequestConfiguration(testDeviceIds: AdConfig.testDeviceIds),
+    );
+  }
   await NotificationService.initialize();
-  runApp(const EntrepreneurMotiApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AdsProvider()..initializeAds()),
+      ],
+      child: const EntrepreneurMotiApp(),
+    ),
+  );
 }
 
 class EntrepreneurMotiApp extends StatelessWidget {
@@ -221,7 +219,32 @@ class _EntrepreneurHomePageState extends State<EntrepreneurHomePage> {
       body: Column(
         children: [
           Expanded(child: _pages[_currentIndex]),
-          const AdBanner(),
+          Consumer<AdsProvider>(
+            builder: (context, adsProvider, _) {
+              if (adsProvider.isBannerAdLoaded && adsProvider.bannerAd != null) {
+                return Container(
+                  height: 60,
+                  decoration: const BoxDecoration(
+                    color: LuxuryColors.luxuryGray,
+                    border: Border(
+                      top: BorderSide(color: LuxuryColors.charcoalGray, width: 1),
+                    ),
+                  ),
+                  child: AdWidget(ad: adsProvider.bannerAd!),
+                );
+              }
+              return Container(
+                height: 60,
+                color: LuxuryColors.charcoalGray,
+                child: const Center(
+                  child: Text(
+                    'Cargando publicidad...',
+                    style: TextStyle(color: LuxuryColors.lightGray),
+                  ),
+                ),
+              );
+            },
+          ),
         ],
       ),
       bottomNavigationBar: Container(
@@ -240,7 +263,10 @@ class _EntrepreneurHomePageState extends State<EntrepreneurHomePage> {
         ),
         child: BottomNavigationBar(
           currentIndex: _currentIndex,
-          onTap: (index) => setState(() => _currentIndex = index),
+          onTap: (index) {
+            setState(() => _currentIndex = index);
+            context.read<AdsProvider>().showInterstitialAd();
+          },
           type: BottomNavigationBarType.fixed,
           backgroundColor: Colors.transparent,
           selectedItemColor: LuxuryColors.platinum,

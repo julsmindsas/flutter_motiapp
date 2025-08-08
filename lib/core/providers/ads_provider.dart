@@ -38,11 +38,13 @@ class AdsProvider extends ChangeNotifier {
       listener: BannerAdListener(
         onAdLoaded: (ad) {
           _isBannerAdLoaded = true;
+          debugPrint('[Ads] Banner loaded: $_bannerAdUnitId');
           notifyListeners();
         },
         onAdFailedToLoad: (ad, error) {
           ad.dispose();
           _isBannerAdLoaded = false;
+          debugPrint('[Ads] Banner failed to load: $_bannerAdUnitId -> $error');
           notifyListeners();
         },
       ),
@@ -58,10 +60,31 @@ class AdsProvider extends ChangeNotifier {
         onAdLoaded: (ad) {
           _interstitialAd = ad;
           _isInterstitialAdLoaded = true;
+          debugPrint('[Ads] Interstitial loaded: $_interstitialAdUnitId');
+          _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+            onAdShowedFullScreenContent: (ad) => debugPrint('[Ads] Interstitial showed'),
+            onAdDismissedFullScreenContent: (ad) {
+              debugPrint('[Ads] Interstitial dismissed');
+              ad.dispose();
+              _interstitialAd = null;
+              _isInterstitialAdLoaded = false;
+              notifyListeners();
+              _loadInterstitialAd();
+            },
+            onAdFailedToShowFullScreenContent: (ad, error) {
+              debugPrint('[Ads] Interstitial failed to show: $error');
+              ad.dispose();
+              _interstitialAd = null;
+              _isInterstitialAdLoaded = false;
+              notifyListeners();
+              _loadInterstitialAd();
+            },
+          );
           notifyListeners();
         },
         onAdFailedToLoad: (error) {
           _isInterstitialAdLoaded = false;
+          debugPrint('[Ads] Interstitial failed to load: $_interstitialAdUnitId -> $error');
           notifyListeners();
         },
       ),
@@ -76,10 +99,12 @@ class AdsProvider extends ChangeNotifier {
         onAdLoaded: (ad) {
           _rewardedAd = ad;
           _isRewardedAdLoaded = true;
+          debugPrint('[Ads] Rewarded loaded: $_rewardedAdUnitId');
           notifyListeners();
         },
         onAdFailedToLoad: (error) {
           _isRewardedAdLoaded = false;
+          debugPrint('[Ads] Rewarded failed to load: $_rewardedAdUnitId -> $error');
           notifyListeners();
         },
       ),
@@ -88,6 +113,7 @@ class AdsProvider extends ChangeNotifier {
 
   Future<void> showInterstitialAd() async {
     if (_interstitialAd != null) {
+      debugPrint('[Ads] Showing interstitial');
       await _interstitialAd!.show();
       _interstitialAd = null;
       _isInterstitialAdLoaded = false;
@@ -107,6 +133,7 @@ class AdsProvider extends ChangeNotifier {
           _loadRewardedAd(); // Cargar el siguiente anuncio
         },
         onAdFailedToShowFullScreenContent: (ad, error) {
+          debugPrint('[Ads] Rewarded failed to show: $error');
           ad.dispose();
           _rewardedAd = null;
           _isRewardedAdLoaded = false;
@@ -114,9 +141,11 @@ class AdsProvider extends ChangeNotifier {
           _loadRewardedAd();
         },
       );
+      debugPrint('[Ads] Showing rewarded');
       await _rewardedAd!.show(
         onUserEarnedReward: (ad, reward) {
           // Aquí puedes dar la recompensa al usuario
+          debugPrint('[Ads] Rewarded earned: ${reward.amount} ${reward.type}');
         },
       );
     }
